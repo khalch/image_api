@@ -1,4 +1,4 @@
-const Services = {
+const MakeRandomService = {
   make_random() {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -6,9 +6,8 @@ const Services = {
     for (let i = 0; i < 20; i++) {
     	text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-
     return text;
   },
 };
 
-module.exports = Services;
+module.exports = MakeRandomService;

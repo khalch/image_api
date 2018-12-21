@@ -23,7 +23,7 @@ const job = new CronJob('0 */10 * * * *', () => {
         });
       });
     }).catch((err) => {
-      console.log(err);
+      console.log({ error: err });
     });
   App.find({})
     .then((app) => {
@@ -42,7 +42,7 @@ const job = new CronJob('0 */10 * * * *', () => {
         });
       });
     }).catch((err) => {
-      console.log(err);
+	    console.log({ error: err });
     });
 });
 job.start();

@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 const conn = {
-  userConn: mongoose.createConnection(process.env.DB_USER),
-  appConn: mongoose.createConnection(process.env.DB_APP)
+  apiConn: mongoose.createConnection(process.env.DB_API),
 };
 
 module.exports = conn;

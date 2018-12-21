@@ -1,34 +1,35 @@
 const Joi = require('joi');
 const App = require('../Models/app.model');
 const AppValidator = require('../Validators/AppDataValidator');
-const Service = require('../Services/services');
+const Service = require('../Services/makeRandomService');
 
 
 const AppController = {
-  createApp(req, res) {
+  createApp: function(req, res) {
     Joi.validate(req.body, AppValidator.addApp, (err, data) => {
       if (err) {
-        res.send({ error: err });
+        res
+          .status(401)
+          .send({ error: err });
       } else {
-        const newApp = new App();
+        let newApp = {};
         newApp.app_name = data.app_name;
         newApp.secret_key = Service.make_random();
         newApp.user_id = req.auth._id;
-        newApp.save((err, app) => {
-          if (err) {
-            res.send({ error: err });
-          } else {
-            res.send({ app });
-            console.log(app);
-          }
+        App.create(newApp).then(app => {
+          res.send({ app: app });
+        }).catch(err => {
+          res
+            .status(500)
+            .send({ error: err });
         });
       }
     });
   },
-  getApp(req, res) {
+  getApp: function(req, res) {
     App.findOne({
       _id: req.params.id
-    }).populate('user_id').then((app) => {
+    }).populate('user_id').then(app => {
       const resApp = {
         _id: app._id,
         app_name: app.app_name,
@@ -40,9 +41,11 @@ const AppController = {
         },
         query_count: app.query_count
       };
-      res.send(resApp);
+      res.send({ app: resApp });
     }).catch((err) => {
-      res.send(err);
+      res
+        .status(500)
+        .send(err);
     });
   }
 };

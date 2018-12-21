@@ -8,7 +8,9 @@ const CounterMiddleware = {
     if (req.auth.user) {
       client.get(req.auth.user._id, (err, result) => {
         if (err) {
-          res.send(err);
+          res
+            .status(500)
+            .send({ error: err });
         }
         result++;
         client.set(req.auth.user._id, result, redis.print);
@@ -17,13 +19,17 @@ const CounterMiddleware = {
     } else if (req.auth.app) {
       client.get(req.auth.app._id, (err, result) => {
         if (err) {
-          res.send(err);
+          res
+            .status(500)
+            .send({ error: err });
         }
         result++;
         client.set(req.auth.app._id, result, redis.print);
       });
     } else {
-      res.status(500).send('error');
+      res
+        .status(500)
+        .send('error');
     }
   },
 };

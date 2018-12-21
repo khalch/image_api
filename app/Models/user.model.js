@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const conn = require('./connection');
 
-const userConn = conn.userConn;
+const apiConn = conn.apiConn;
 
 const Schema = mongoose.Schema;
 
@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
-    get: () => {},
+    // get: () => {},
   },
   access_token: {
     type: String,
@@ -31,4 +31,4 @@ const UserSchema = new Schema({
   }
 });
 
-module.exports = userConn.model('User', UserSchema);
+module.exports = apiConn.model('User', UserSchema);

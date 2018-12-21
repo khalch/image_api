@@ -2,32 +2,34 @@ const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const User = require('../Models/user.model');
 const UserValidator = require('../Validators/UserDataValidator');
-const Service = require('../Services/services');
+const Service = require('../Services/makeRandomService');
 
 const AuthController = {
   register(req, res) {
     Joi.validate(req.body, UserValidator.registerSchema, (err, data) => {
       if (err) {
-        res.send({ error: err });
+        res
+          .status(401)
+          .send({ error: err });
       }
-      const newUser = new User();
       bcrypt.hash(data.password, process.env.SALT_PASS, (err, hash) => {
         if (err) {
-          res.send({ error: err });
-        } else {
-          bcrypt.hash({ data });
+          res
+            .status(500)
+            .send({error: err});
         }
+        let newUser = {};
         newUser.name = data.name;
         newUser.password = hash;
         newUser.email = data.email;
+        newUser.query_url = data.query_url;
         newUser.access_token = Service.make_random();
-        newUser.save((err, user) => {
-          if (err) {
-            res.send({ error: err });
-          } else {
-            res.send({ user });
-            console.log(user);
-          }
+        User.create(newUser).then(user => {
+          res.send({ user: user });
+        }).catch(err => {
+          res
+            .status(500)
+            .send({ error: err });
         });
       });
     });
@@ -35,21 +37,27 @@ const AuthController = {
   login(req, res) {
     Joi.validate(req.body, UserValidator.loginSchema, (err, data) => {
       if (err) {
-        res.send({ error: err });
-      }
-      bcrypt.hash(data.password, process.env.SALT_PASS, (err, hash) => {
-        if (err) {
-          res.send({ error: err });
-        }
+        res
+          .status(401)
+          .send({ error: err });
+      } else {
         User.findOne({
           email: data.email,
-          password: hash
         }).then((user) => {
-          res.send(user);
+          let match = bcrypt.compareSync(req.body.password, user.password);
+          if (match) {
+            res.send({user: user});
+          } else {
+            res
+              .status(401)
+              .send('wrong password');
+          }
         }).catch((err) => {
-          res.send(err);
+          res
+            .status(500)
+            .send({ error: err });
         });
-      });
+      }
     });
   },
 

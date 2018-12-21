@@ -4,12 +4,12 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyparser = require('body-parser');
-const CronJob = require('./app/Services/synchronization');
+const CronJob = require('./app/Services/synchronizationService');
 
 
 app.use(cors());
 app.options('*', cors());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(bodyparser.raw());
 
