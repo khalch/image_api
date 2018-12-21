@@ -1,0 +1,8 @@
+./data
+./redis-data
+./dockerignore
+./.env
+./docker-compose.yml
+./Dockerfile
+./.eslintrc.json
+./public
