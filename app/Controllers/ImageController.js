@@ -14,7 +14,7 @@ const ImageController = {
       const file = data.parts[0];
       const Captures = JSON.parse(data.fields.captures);
       const date = Date.now().toString();
-      const dir = `./public/${req.auth._id}/${date}`;
+      const dir = `./public/${req.auth.user._id}/${date}`;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
@@ -33,40 +33,32 @@ const ImageController = {
               ImageManipulation.apply(Capture.filters, ClonePic);
               ClonePic.write(`${dir}/${Capture.name}${file.filename}`);
             }
-            fs.readdir(dir, (err, data) => {
-              if (err) {
-                res.send(err);
-              } else {
-                for (const image of data) {
-                  const filetozip = fs.readFileSync(`${dir}/${image}`, 'base64');
-                  zip_images.file(image, filetozip, { base64: true });
-                }
+            ImageManipulation.read_dir(dir).then(data => {
+              for (const image of data) {
+                const filetozip = fs.readFileSync(`${dir}/${image}`, 'base64');
+                zip_images.file(image, filetozip, { base64: true });
               }
               const zipData = zip_images.generate({ base64: true, compression: 'DEFLATE' });
-              fs.writeFile(`${dir}/${date}.zip`, zipData, 'base64', (err) => {
-                if (!err) {
-                  for (const image of data) {
-                    fs.unlinkSync(`${dir}/${image}`);
-                  }
-                } else {
-                  res.send(err);
+              ImageManipulation.create_zip(`${dir}/${date}.zip`, zipData,).then(() => {
+                for (const image of data) {
+                  fs.unlinkSync(`${dir}/${image}`);
                 }
                 const formdata = {
                   zip: fs.createReadStream(`${dir}/${date}.zip`)
                 };
-                request.post({
-                  url: req.auth.app.query_url,
-                  formData: formdata
-                }, (err, httpResponse, body) => {
-                  if (err) {
-                    return console.error('upload failed:', err);
-                  }
-                  if (body == 'success') {
+                ImageManipulation.query('http://192.168.0.141:3010/form-data/parse', formdata).then(body => {
+                  if (body === 'success') {
                     fs.unlinkSync(`${dir}/${date}.zip`);
                     fs.rmdirSync(`${dir}`);
-                  };
+                  }
+                }).catch(err => {
+                  res.send(err);
                 });
+              }).catch(err => {
+                res.send(err);
               });
+            }).catch(err => {
+              res.send(err);
             });
           } else {
             res.send(err);

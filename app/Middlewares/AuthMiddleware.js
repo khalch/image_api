@@ -8,9 +8,9 @@ const AuthMiddleware = {
     if (('authorization' in req.headers) && ((req.query.public_key) && (req.query.secret_key))) {
       res.send({ error: 'choose one way to auth' });
     } else if ('authorization' in req.headers) {
-      this.auth_by_user(req, res, next);
+      AuthMiddleware.auth_by_user(req, res, next);
     } else if ((req.query.public_key) && (req.query.secret_key)) {
-      this.auth_by_app(req, res, next);
+	    AuthMiddleware.auth_by_app(req, res, next);
     } else {
       res
         .status(401)
