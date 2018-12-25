@@ -14,6 +14,7 @@ const AppController = {
       } else {
         let newApp = {};
         newApp.app_name = data.app_name;
+        newApp.query_url = data.query_url;
         newApp.secret_key = Service.make_random();
         newApp.user_id = req.auth._id;
         App.create(newApp).then(app => {

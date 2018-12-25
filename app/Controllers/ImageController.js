@@ -51,7 +51,7 @@ const ImageController = {
                     const formdata = {
                       zip: fs.createReadStream(`${dir}/${date}.zip`)
                     };
-                    ImageManipulation.query('http://192.168.0.141:3010/form-data/parse', formdata).then(body => {
+                    ImageManipulation.query(req.auth.app.query_url, formdata).then(body => {
                       if (body === 'success') {
                         fs.unlinkSync(`${dir}/${date}.zip`);
                         fs.rmdirSync(`${dir}`);
