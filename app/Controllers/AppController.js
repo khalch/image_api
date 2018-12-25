@@ -2,7 +2,7 @@ const Joi = require('joi');
 const App = require('../Models/app.model');
 const AppValidator = require('../Validators/AppDataValidator');
 const Service = require('../Services/makeRandomService');
-
+const mongoose = require('mongoose');
 
 const AppController = {
   createApp: function(req, res) {
@@ -13,10 +13,13 @@ const AppController = {
           .send({ error: err });
       } else {
         let newApp = {};
+
+        // newApp._id = new mongoose.Types.ObjectId();
         newApp.app_name = data.app_name;
         newApp.query_url = data.query_url;
         newApp.secret_key = Service.make_random();
-        newApp.user_id = req.auth._id;
+        newApp.user_id = req.auth.user._id;
+        console.log(newApp);
         App.create(newApp).then(app => {
           res.send({ app: app });
         }).catch(err => {

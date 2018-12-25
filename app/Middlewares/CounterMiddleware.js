@@ -26,6 +26,7 @@ const CounterMiddleware = {
         result++;
         client.set(req.auth.app._id, result, redis.print);
       });
+      next();
     } else {
       res
         .status(500)

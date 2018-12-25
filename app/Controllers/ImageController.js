@@ -15,11 +15,11 @@ const ImageController = {
       const file = data.parts[0];
       const captures = JSON.parse(data.fields.captures);
       Joi.validate(captures, FiltersValidator, (err, Captures) => {
-        if(err) {
-          res.send({error: err})
+        if (err) {
+          res.send({error: err});
         } else {
           const date = Date.now().toString();
-          const dir = `./public/${req.auth.user._id.toString()}/${date.toString()}`;
+          const dir = `./public/${req.auth.app._id.toString()}/${date.toString()}`;
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
           }
@@ -55,6 +55,9 @@ const ImageController = {
                       if (body === 'success') {
                         fs.unlinkSync(`${dir}/${date}.zip`);
                         fs.rmdirSync(`${dir}`);
+                        res.send('success');
+                      } else {
+                        res.send({error: 'something goes wrong'});
                       }
                     }).catch(err => {
                       res.send(err);

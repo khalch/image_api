@@ -3,6 +3,7 @@ const Joi = require('joi');
 const User = require('../Models/user.model');
 const UserValidator = require('../Validators/UserDataValidator');
 const Service = require('../Services/makeRandomService');
+const mongoose = require('mongoose');
 
 const AuthController = {
   register(req, res) {
@@ -19,6 +20,7 @@ const AuthController = {
             .send({error: err});
         }
         let newUser = {};
+        newUser._id = new mongoose.Types.ObjectId();
         newUser.name = data.name;
         newUser.password = hash;
         newUser.email = data.email;

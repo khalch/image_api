@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const conn = require('./connection');
-
+const App = require('./app.model');
 const apiConn = conn.apiConn;
 
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+  _id: Schema.Types.ObjectId,
   name: {
     type: String,
     required: true,
@@ -18,17 +19,16 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
-    // get: () => {},
   },
   access_token: {
     type: String,
     required: true,
-    get: () => {}
   },
   query_count: {
     type: Number,
     default: 0
-  }
+  },
+
 });
 
 module.exports = apiConn.model('User', UserSchema);
