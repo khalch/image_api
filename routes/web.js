@@ -4,6 +4,8 @@ const Limiter = require('express-rate-limiter');
 const MemoryStore = require('express-rate-limiter/lib/memoryStore');
 const Kernel = require('../app/Kernel');
 const limiter = new Limiter({ db: new MemoryStore() });
+const Joi = require('joi');
+const FiltersValidator = require('../app/Validators/FiltersValidator');
 
 Router.get('/', (req, res) => {
   res.send('hello');

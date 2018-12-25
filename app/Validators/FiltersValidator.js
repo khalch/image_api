@@ -1,23 +1,29 @@
 const Joi = require('joi');
 
-const FiltersValidators = {
-  filters: Joi.object().keys({
-    resize: Joi.array(),
-    scale: Joi.array(),
-    crop: Joi.array(),
-    flip: Joi.array(),
-    mirror: Joi.array(),
-    rotate: Joi.array(),
-    brightness: Joi.array(),
-    contrast: Joi.array(),
-    dither565: Joi.array(),
-    greyscale: Joi.array(),
-    invert: Joi.array(),
-    normalize: Joi.array(),
-    blur: Joi.array(),
-    posterize: Joi.array(),
-    sepia: Joi.array(),
-  }),
-
-};
-module.exports = FiltersValidators;
+const FiltersObjectValidator = Joi.object({
+  apply: Joi.string().valid([
+    'resize',
+    'scale',
+    'crop',
+    'flip',
+    'mirror',
+    'rotate',
+    'brightness',
+    'contrast',
+    'dither565',
+    'greyscale',
+    'invert',
+    'normalize',
+    'blur',
+    'posterize',
+    'sepia'
+  ]),
+  value: Joi.array().items(Joi.number())
+});
+const CaptureValidator = Joi.array().items(
+  Joi.object().keys({
+    name: Joi.string().required(),
+    filters: Joi.array().items(FiltersObjectValidator)
+  })
+)
+module.exports = CaptureValidator;
